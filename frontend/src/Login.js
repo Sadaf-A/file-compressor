@@ -1,21 +1,30 @@
 import React, { useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import axios from 'axios';
+import './Login.css';
 
 function Login({ setToken }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [token, setJWTToken] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:5000/api/login', { username, password });
       setJWTToken(response.data.token);
+      localStorage.setItem('username', username);
+      setIsLoggedIn(true)
       console.log(token)
     } catch (error) {
       console.error('Error logging in:', error);
     }
   };
+
+  if (isLoggedIn) {
+    return <Navigate to="/profile" />; 
+  }
 
   return (
     <form onSubmit={handleSubmit}>

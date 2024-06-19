@@ -1,0 +1,34 @@
+.uploads {
+    padding: 20px;
+    color: #ffffff;
+  }
+  
+  .uploads h1 {
+    margin-bottom: 20px;
+  }
+  
+  .uploads ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .uploads li {
+    margin-bottom: 10px;
+    background-color: #333;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .uploads li a {
+    color: #1e90ff;
+    text-decoration: none;
+  }
+  
+  .uploads li a:hover {
+    text-decoration: underline;
+  }
+  
+  .uploads li div {
+    margin-top: 5px;
+  }
+  

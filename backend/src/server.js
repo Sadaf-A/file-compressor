@@ -29,8 +29,8 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 const port = 5000;
 
 AWS.config.update({
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_SECRET_KEY,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     region: process.env.AWS_REGION,
 });
 
@@ -38,7 +38,7 @@ const s3 = new AWS.S3();
 
 const uploadFileToS3 = (fileName, compressedData) => {
     const params = {
-      Bucket: process.env.AWS_BUCKET_NAME,
+      Bucket: process.env.AWS_S3_BUCKET_NAME,
       Key: fileName,
       Body: compressedData,
       ContentType: 'text/plain',
@@ -78,8 +78,7 @@ app.post('/api/register', async (req, res) => {
     console.log(user);
     await user.save();
     console.log('User saved');
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-    res.json({ token });
+    res.send("ok");
   } catch (err) {
     res.status(500).send('Server error');
   }
@@ -146,6 +145,8 @@ app.get('/api/upload/s3', (req, res) => {
         return res.status(500).send('Error reading the file.');
       }
 
+    console.log(fileContent)
+
       const decoded = jwt.verify(req.query.token, process.env.JWT_SECRET);
       const userId = decoded._id;
 
@@ -154,7 +155,7 @@ app.get('/api/upload/s3', (req, res) => {
       console.log(user);
       const pathName = path.basename(filePath);
       const fileName = `${user.username}/${pathName}`;
-      console.log(fileName)
+      console.log(fileName);
   
       uploadFileToS3(fileName, fileContent)
         .then(location => {
@@ -167,6 +168,28 @@ app.get('/api/upload/s3', (req, res) => {
           res.status(500).send('Error uploading to S3.');
         });
     });
+  });
+
+
+  app.get('/api/uploads', async (req, res) => {
+    const username = req.query.username;
+    const params = {
+      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Prefix: `${username}/` 
+    };
+  
+    try {
+      const data = await s3.listObjectsV2(params).promise();
+      const files = data.Contents.map(file => ({
+        key: file.Key,
+        lastModified: file.LastModified,
+        size: file.Size
+      }));
+      res.json(files);
+    } catch (error) {
+      console.error('Error fetching files from S3:', error);
+      res.status(500).send('Error fetching files from S3');
+    }
   });
 
 app.get('/api/download', (req, res) => {

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './Register.css'; // Import your CSS file
+import { Navigate } from 'react-router-dom';
+import './Register.css'; 
 
 function Register() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [registered, setRegistered] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -12,12 +14,17 @@ function Register() {
       const response = await axios.post('http://localhost:5000/api/register', { username, password });
       const { token } = response.data;
       localStorage.setItem('token', token);
-      alert('Registration successful!'); // Optional: Provide user feedback
+      alert('Registration successful!'); 
+      setRegistered(true);
     } catch (error) {
       console.error('Error registering:', error);
-      alert('Registration failed. Please try again.'); // Optional: Error handling
+      alert('Registration failed. Please try again.'); 
     }
   };
+
+  if (registered) {
+    return <Navigate to="/login" />; 
+  }
 
   return (
     <form className="register-form" onSubmit={handleSubmit}>

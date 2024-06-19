@@ -1,0 +1,60 @@
+/* Container for the form */
+form {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #444;
+    border-radius: 5px;
+    background-color: #2c2c2c;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Title */
+  form h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #fff;
+  }
+  
+  /* Form fields */
+  form div {
+    margin-bottom: 15px;
+  }
+  
+  /* Labels */
+  form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #bbb;
+  }
+  
+  /* Input fields */
+  form input[type="text"],
+  form input[type="password"] {
+    width: calc(100% - 22px); /* Adjusting for padding */
+    padding: 10px;
+    border: 1px solid #555;
+    border-radius: 3px;
+    font-size: 16px;
+    background-color: #444;
+    color: #fff;
+  }
+  
+  /* Button */
+  form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 3px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  form button:hover {
+    background-color: #45a049;
+  }
+  
