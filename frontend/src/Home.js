@@ -1,10 +1,25 @@
 import React, { useCallback, useState } from 'react';
 import axios from 'axios';
 import { useDropzone } from 'react-dropzone';
+import {
+  Container,
+  Typography,
+  Button,
+  Box,
+  Paper,
+  CircularProgress,
+  Snackbar,
+  Alert
+} from '@mui/material';
+import './Home.css';
 
 function Home() {
   const [compressedFilePath, setCompressedFilePath] = useState('');
   const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
   const onDrop = useCallback((acceptedFiles) => {
     setFile(acceptedFiles[0]);
@@ -12,9 +27,10 @@ function Home() {
   }, []);
 
   const handleFileUpload = (file) => {
+    setLoading(true);
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('token', localStorage.getItem('token'))
+    formData.append('token', localStorage.getItem('token'));
 
     axios.post('http://localhost:5000/api/upload', formData, {
       headers: {
@@ -24,9 +40,17 @@ function Home() {
       .then((response) => {
         console.log('File uploaded successfully:', response.data);
         setCompressedFilePath(response.data.filePath);
+        setLoading(false);
+        setSnackbarMessage('File uploaded and compressed successfully!');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
       })
       .catch((error) => {
         console.error('Error uploading file:', error);
+        setLoading(false);
+        setSnackbarMessage('Error uploading file.');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
       });
   };
 
@@ -50,6 +74,9 @@ function Home() {
       })
       .catch((error) => {
         console.error('Error downloading file:', error);
+        setSnackbarMessage('Error downloading file.');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
       });
   };
 
@@ -63,30 +90,71 @@ function Home() {
     })
       .then((response) => {
         console.log('File uploaded to S3 successfully:', response.data);
+        setSnackbarMessage('File uploaded to S3 successfully!');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
       })
       .catch((error) => {
         console.error('Error uploading to S3:', error);
+        setSnackbarMessage('Error uploading to S3.');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
       });
   };
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Drag and Drop File Upload</h1>
-        <div {...getRootProps({ className: 'dropzone' })}>
+    <Container maxWidth="md" sx={{ mt: 4 }}>
+      <Paper elevation={3} sx={{ p: 4, backgroundColor: '#333', color: '#fff' }}>
+        <Typography variant="h4" component="h1" gutterBottom>
+          Register to upload your files to the cloud!
+        </Typography>
+        <Typography variant="h5" component="h2" gutterBottom>
+          Drag and Drop File Upload
+        </Typography>
+        <Box
+          {...getRootProps({ className: 'dropzone' })}
+          sx={{
+            border: '2px dashed grey',
+            borderRadius: '4px',
+            padding: '20px',
+            textAlign: 'center',
+            cursor: 'pointer',
+            mb: 2
+          }}
+        >
           <input {...getInputProps()} />
-          <p>Drag 'n' drop some files here, or click to select files</p>
-        </div>
+          <Typography color="inherit">Drag 'n' drop some files here, or click to select files</Typography>
+        </Box>
+        {loading && <CircularProgress color="primary" />}
         {compressedFilePath && (
-          <div>
-            <button onClick={handleFileDownload}>Download Compressed File</button>
-            <button onClick={handleFileUploadToS3}>Upload Compressed File to S3</button>
-          </div>
+          <Box sx={{ mt: 2 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleFileDownload}
+              sx={{ mr: 2 }}
+            >
+              Download Compressed File
+            </Button>
+          </Box>
         )}
-      </header>
-    </div>
+      </Paper>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+          sx={{ width: '100%' }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+    </Container>
   );
 }
 

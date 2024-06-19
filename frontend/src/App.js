@@ -9,6 +9,7 @@ import Login from './Login';
 import Profile from './Profile';
 import './App.css';
 
+
 function App() {
   return (
     <Router>
@@ -31,7 +32,7 @@ function App() {
 function Navbar() {
   const location = useLocation();
 
-  if (location.pathname.startsWith('/profile')) {
+  if (location.pathname.startsWith('/profile') || location.pathname.startsWith('/uploads')) {
     return <ProfileNavbar />;
   }
 

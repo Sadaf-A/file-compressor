@@ -93,6 +93,7 @@ app.post('/api/login', async (req, res) => {
     if (!isMatch) return res.status(400).send('Invalid username or password.');
 
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+    console.log(token)
     res.send({ token });
   } catch (err) {
     res.status(500).send('Server error');
