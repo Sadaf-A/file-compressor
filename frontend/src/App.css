@@ -78,3 +78,7 @@ h1 {
   margin: 20px;
 }
 
+.App .content {
+  padding-top: 60px; /* Adjust this value based on your navbar height */
+}
+

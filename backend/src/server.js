@@ -9,7 +9,8 @@ const path = require('path');
 const fs = require('fs');
 const { compress } = require('../huffman');
 const cors = require('cors');
-require('dotenv').config()
+require('dotenv').config();
+console.log(process.env);
 
 const User = require('./models/User');
 
