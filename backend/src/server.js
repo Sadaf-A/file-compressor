@@ -109,7 +109,7 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
     console.log(inputFilePath)
     console.log(`input path: ${inputFilePath}`);
 
-    const compressedFilePath = path.resolve(__dirname, `${req.file.path}.huff`);
+    const compressedFilePath = path.resolve(__dirname, `${req.file.originalname}.huff`);
   
     fs.readFile(inputFilePath, 'utf8', (err, data) => {
       console.log("here")
@@ -180,10 +180,18 @@ app.get('/api/upload/s3', (req, res) => {
   
     try {
       const data = await s3.listObjectsV2(params).promise();
-      const files = data.Contents.map(file => ({
-        key: file.Key,
-        lastModified: file.LastModified,
-        size: file.Size
+      const files = await Promise.all(data.Contents.map(async (file) => {
+        const signedUrl = await s3.getSignedUrlPromise('getObject', {
+          Bucket: process.env.AWS_S3_BUCKET_NAME,
+          Key: file.Key,
+          Expires: 60 * 60
+        });
+        return {
+          key: file.Key,
+          lastModified: file.LastModified,
+          size: file.Size,
+          url: signedUrl
+        };
       }));
       res.json(files);
     } catch (error) {

@@ -24,7 +24,7 @@ function Uploads() {
       <ul>
         {files.map((file) => (
           <li key={file.key}>
-            <a href={`https://your-bucket-name.s3.amazonaws.com/${file.key}`} target="_blank" rel="noopener noreferrer">
+            <a href={file.url} target="_blank" rel="noopener noreferrer">
               {file.key}
             </a>
             <div>Last Modified: {new Date(file.lastModified).toLocaleString()}</div>

@@ -15,8 +15,9 @@ function Login({ setToken }) {
       const response = await axios.post('http://localhost:5000/api/login', { username, password });
       setJWTToken(response.data.token);
       localStorage.setItem('username', username);
+      localStorage.setItem('token', response.data.token);
       setIsLoggedIn(true)
-      console.log(token)
+      console.log(response.data.token)
     } catch (error) {
       console.error('Error logging in:', error);
     }
