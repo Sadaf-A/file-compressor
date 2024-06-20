@@ -51,4 +51,5 @@ Using Docker:
 | Design        | Wireframes and prototypes in Figma         |
 | Frontend      | React                                      |
 | Backend       | Node.js, MongoDB, Express                  |
+| Hosting       | AWS, Docker                                |
 
